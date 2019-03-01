@@ -1,0 +1,2 @@
+SITE_URL = 'YOUR_SITE_URL'
+DEBUG = True

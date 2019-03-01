@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="wrapper ">
+    {% include 'base/sidebar.html' %}
+    <div class="main-panel">
+        {% include 'base/navbar_home.html' %}
+        <div class="content no-margin wizard-content">
+            <div class="container-fluid"> 
+                <div id="rocket-desk" class="col-md-10 col-lg-8 col-xl-6 col-xxl-6 col-centered">
+                    <div class="intro-wrapper">
+                        <a href="{% url 'category' %}">
+                            <div class="intro" style="background-image: url(/static/assets/img/rocket.png)">
+                                <!-- <div class="layer layer-1"></div> -->
+                                <div class="layer layer-2">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Crea una HaikuCard</h4>
+                                    </div>
+                                </div>
+                                <div class="layer light"></div>
+                                <div class="layer light light-2" style="display:none"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

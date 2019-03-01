@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load auth_extras %}
+{% load static %}
+{% block content %}
+    <div class="wrapper ">
+        {% include 'base/sidebar.html' %}
+        <div class="main-panel">
+            {% include 'base/navbar.html' %}
+            <div class="content no-margin">
+                <div class="container-fluid">
+                    <h2 class="action-header">Scegli uno stile</h2>
+                    <div id="content" class="row">
+                        {% for temp in template %}
+                            {% if request.user|has_group:temp.vertical %}
+                            <div class="col-md-6 col-lg-6 col-xl-4 col-xxl-3">
+                                <div class="card bmd-card-raised template">
+                                    <div class="card-header card-header-image">
+                                        <video onmouseover="this.play()" onmouseout="this.pause()" loop muted
+                                            poster="{{ temp.template_picture }}">
+                                            <source type="video/mp4" src="{{ temp.template_video }}">
+                                        </video>
+                                    </div>
+                                    <a href="{% url 'create_card' temp.id %}">
+                                        <div class="card-body">
+                                            <h4 class="card-title">{{ temp.title }}</h4>
+                                            <p class="card-category">{{ temp.description }}</p>
+                                            <p class="text-cta">Seleziona ></p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

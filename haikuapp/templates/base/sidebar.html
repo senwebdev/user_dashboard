@@ -1,0 +1,46 @@
+<div class="sidebar" data-background-color="black">
+    <div class="logo">
+        <a href="{% url 'wizard' %}" class="logo-normal">
+            <img src="https://res.cloudinary.com/haiku/image/upload/e_colorize,co_white/w_400/v1530889807/site/haiku_logo.png"
+                 data-src-retina="https://res.cloudinary.com/haiku/image/upload/e_colorize,co_white/w_400/v1530889807/site/haiku_logo.png"/>
+        </a>
+
+    </div>
+
+    <div class="sidebar-wrapper">
+        <ul class="nav">
+            <li class="nav-item">
+        <div >
+            <p class="text-center" style="color:white" >{% if user.is_authenticated%} {{user.username}}  {% endif %}</p>
+        </div>
+            </li>
+            <li class="nav-item {% if request.path == '/wizard/' or 'category' in request.path or 'create' in request.path %} active {% endif %}">
+                <a class="nav-link" href="{% url 'category' %}">
+                    <i class="material-icons">brush</i>
+                    <p>Crea una HaikuCard</p>
+                </a>
+            </li>
+            <li class="nav-item {% if 'card' in request.path %} active {% endif %}">
+                <a class="nav-link" href="{% url 'cards' %}">
+                    <i class="material-icons">graphic_eq</i>
+                    <p>Gestisci le tue HaikuCard</p>
+                </a>
+            </li>
+            <!-- your sidebar here -->
+        </ul>
+        <footer class="footer">
+            <div class="container-fluid">
+                <!--<div class="copyright float-right">
+                    &copy;
+                    <script>
+                        document.write(new Date().getFullYear())
+                    </script>
+                    <a style="color:white" href="https://haiku.is" target="_blank">Haiku</a></div>-->
+                <!-- your footer here -->
+            </div>
+            <a href="{% url 'logout' %}" style="color:white">
+            <p class="text-center">Logout</p>
+            </a>
+        </footer>
+    </div>
+</div>

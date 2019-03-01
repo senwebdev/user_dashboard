@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="wrapper ">
+        {% include 'base/sidebar.html' %}
+        <div class="main-panel">
+            {% include 'base/navbar.html' %}
+            <div class="content no-margin">
+                <form role="form" method="post" action="{% url "create_card" template.id %}"
+                      enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+                    <div class="container-fluid">
+                        <h2 class="action-header">Crea la tua HaikuCard</h2>
+                        <div class="row">
+                            <div class="col-xl-12">
+                            <div id="beginning" class="card bmd-card-raised">
+                                <div class="card-header card-header-success card-header-icon">
+                                    <!--<h4 class="card-title">{{ template.title }}</h4>-->
+                                </div>
+                                {% include 'messages.html' %}
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-12 col-xl-6 ml-auto mr-auto">
+                                            <div id="video-preview" class="card bmd-card-raised">
+                                                <div id="previewDiv"
+                                                     class="intrinsic-container intrinsic-container-16x9">
+                                                    <iframe id="previewframe"
+                                                            src="/templates/{{ template.template_name }}"
+                                                            onload="if (formData) {document.getElementById('previewframe').contentWindow.startAnimation(formData);} else { document.getElementById('previewframe').contentWindow.startAnimation();}"
+                                                            style="border:0;" allowfullscreen scrolling="no"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-12 col-xl-6 ml-auto mr-auto">
+                                            <h4 class="block-title m-b-0 ">Completa le info e clicca su preview per vedere il tuo contenuto in azione!</h4>
+                                            <p><br></p>
+                                            {% for field in fields %}
+                                                {% if field.varType == 'textarea' %}
+                                                <div class="form-group form-group-default text-field">
+                                                    <label>{{ field.name }}</label>
+                                                    <textarea id="name" name="{{ field.variable }}"
+                                                           class="form-control json_field" {% if field.varRequired %}required{% endif %}
+                                                           onBlur="livePreview()"></textarea>
+                                                </div>
+                                                {% endif %}
+                                                {% if field.varType == 'text' %}
+                                                <div class="form-group form-group-default text-field">
+                                                    <label>{{ field.name }}</label>
+                                                    <input id="name" name="{{ field.variable }}" type="text"
+                                                           class="form-control json_field" {% if field.varRequired %}required{% endif %}
+                                                           onBlur="livePreview()">
+                                                </div>
+                                                {% endif %}
+                                                {% if field.varType == 'number' %}
+                                                <div class="form-group form-group-default number-field">
+                                                    <label>{{ field.name }}</label>
+                                                    <input id="name" name="{{ field.variable }}" type="number"
+                                                           class="form-control json_field" {% if field.varRequired %}required{% endif %}
+                                                           onBlur="livePreview()">
+                                                </div>
+                                                {% endif %}
+                                                {% if field.varType == 'color' %}
+                                                <div class="form-group form-group-default color-field">
+                                                    <label>{{ field.name }}</label>
+                                                    <input id="name" name="{{ field.variable }}" type="color"
+                                                           class="form-control json_field" {% if field.varRequired %}required{% endif %}
+                                                           onBlur="livePreview()">
+                                                </div>
+                                                {% endif %}
+                                                {% if field.varType == 'date' %}
+                                                <div class="form-group form-group-default date-field">
+                                                    <label>{{ field.name }}</label>
+                                                    <input id="name" name="{{ field.variable }}" type="date"
+                                                           class="form-control json_field" {% if field.varRequired %}required{% endif %}
+                                                           onBlur="livePreview()">
+                                                </div>
+                                                {% endif %}
+                                                {% if field.varType == 'time' %}
+                                                <div class="form-group form-group-default time-field">
+                                                    <label>{{ field.name }}</label>
+                                                    <input id="name" name="{{ field.variable }}" type="time"
+                                                           class="form-control json_field" {% if field.varRequired %}required{% endif %}
+                                                           onBlur="livePreview()">
+                                                </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for field in fields %}
+                                                {% if field.varType == 'checkbox' %}
+                                                <div class="form-group form-group-default checkbox-field bmd-form-group">
+                                                    <label>{{ field.name }}</label>
+                                                    <label class="switch">
+                                                        <input id="name" name="{{ field.variable }}" type="checkbox"
+                                                           class="form-control json_field" {% if field.varRequired %}required{% endif %}
+                                                           onBlur="livePreview()">
+                                                        <span class="slider round"></span>
+                                                    </label>
+                                                </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for field in fields %}
+                                                {% if field.varType == 'radio' %}
+                                                <div class="form-group form-group-default radio-text">
+                                                    <label>{{ field.name }}</label>
+                                                    <input id="name" name="{{ field.variable }}" type="radio"
+                                                           class="form-control json_field" {% if field.varRequired %}required{% endif %}
+                                                           onBlur="livePreview()">
+                                                </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for field in fields %}
+                                                {% if field.varType == 'image' %}               
+                                                <div class="form-group form-group-default image-field bmd-form-group">
+                                                    <a href="javascript:void(0);" id="upload_widget_opener{{ forloop.counter0 }}">
+                                                        <label>Select {{ field.name }}</label>
+                                                            <div class="image-selector">
+                                                                <i class="material-icons" id="addPhoto" style="font-size:3rem;">add_photo_alternate</i>
+                                                            </div>
+                                                    </a>
+                                                    <input type="hidden" id="uploadimglink{{ forloop.counter0 }}" name="{{ field.variable }}" class="form-control json_field">
+                                                    <script src="https://widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+                                                    <script>document.getElementById("upload_widget_opener{{ forloop.counter0 }}").addEventListener("click", function() {
+                                                        cloudinary.openUploadWidget({ cloud_name: 'haiku', upload_preset: 'z8dovxfh'}, 
+                                                        function(error, result) { document.getElementById("uploadimglink{{ forloop.counter0 }}").value = result[0].secure_url });
+                                                    }, false);
+                                                    </script>
+                                                </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <input type="hidden" id="user_input" name="user_input">
+                                            
+                                            <div class="row">
+                                                <div id="submit-buttons" class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                                                    <div>
+                                                        <button id="previewButton" type="button" onclick="preview()"
+                                                                class="btn btn-default float-left"
+                                                                style="margin-right:13px">Preview
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                                                    <div>
+                                                        <button id="submitButton" type="button" class="btn btn-primary"
+                                                                data-toggle="modal" data-target="#submitModal">
+                                                                Invia
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>               
+                    <!-- The Modal -->
+                    <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModal"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Pianifica la tua HaikuCard</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-12">
+                                        <h4>Quando vuoi mostrarla?</h4>
+                                        <fieldset required="">
+                                            <input type="radio" id="date" name="date" value="alwaysOn" checked="">
+                                            <label for="time">Sempre attiva</label><br>
+                                            <input type="radio" id="date" name="date" value="specificDate">
+                                            <label for="time">Indica un periodo specifico</label>
+                                            <div class="date-picker" style="display: none;">
+                                                <div class="col-12">
+                                                    <h4>Data</h4>
+                                                    <p id="errorText" class="text-danger"></p>
+                                                    <label for="fromDate" style="margin-right: 10px">Dal</label>
+                                                    <input type="date" id="fromDate" name="date_from" data-require-pair="#specificTime">
+                                                    <br>
+                                                    <label for="fromDate" style="margin-right: 20px">Al</label>
+                                                    <input type="date" id="toDate" name="date_to" data-require-pair="#specificTime">
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Orario</h4>
+                                                    <p id="errorTextTime" class="text-danger"></p>
+                                                    <input type="radio" id="hour" name="hour" value="always" checked="">
+                                                    <label for="time">Tutto il giorno</label><br>
+                                                    <input type="radio" id="time" name="hour" value="specificHour">
+                                                    <label for="time">Orario specifico</label>
+                                                    <br>
+                                                    <div class="hour-picker" style="display: none;">
+                                                        <label for="fromHour">Dalle</label>
+                                                        <input type="time" id="fromHour" name="time_from"
+                                                            data-require-pair="#specificHour">
+                                                        <label for="toHour">Alle</label>
+                                                        <input type="time" id="toHour" name="time_to" data-require-pair="#specificHour">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary float-left" style="margin-right:20px">Conferma
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

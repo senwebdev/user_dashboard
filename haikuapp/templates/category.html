@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="wrapper ">
+    {% include 'base/sidebar.html' %}
+    <div class="main-panel">
+        {% include 'base/navbar.html' %}
+        <div class="content no-margin">
+            <div class="container-fluid">
+                <h2 class="action-header">Seleziona una categoria</h2>
+                <div id="content" class="row">
+                    {% for cat in category %}
+                    <div class="col-md-6 col-lg-6 col-xl-4 col-xxl-3">
+                        <a href="{% url 'templates' cat.id  %}">
+                            <div class="card bmd-card-raised category">
+                                <div class="card-header card-header-image">
+                                    <img class="img" src="{{ cat.get_image_url }}">
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="card-title">{{cat.title}}</h4>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="wrapper ">
+        {% include 'base/sidebar.html' %}
+        <div class="main-panel">
+            {% include 'base/navbar_home.html' %}
+            <div class="content no-margin">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-12">
+                        {% include 'messages.html' %}
+                            <div class="row">
+                                {% for card in cards %}
+                                <div class="col-md-6 col-lg-6 col-xl-4 col-xxl-3">
+                                    <a href="{% url 'card' card.id %}">
+                                        <div class="card bmd-card-raised manage-hkc">
+                                            <div class="triangle-badge">
+                                                <svg viewBox="0 0 10 10" preserveAspectRatio="none">
+                                            <defs>
+                                                <linearGradient id="active-gradient">
+                                                    <stop offset="5%" stop-color="#96c93d" />
+                                                    <stop offset="95%" stop-color="#00b09b" />
+                                                </linearGradient>
+                                                <linearGradient id="expiring-gradient">
+                                                    <stop offset="5%" stop-color="#F2C94C" />
+                                                    <stop offset="95%" stop-color="#F2994A" />
+                                                </linearGradient>
+                                                <linearGradient id="expired-gradient">
+                                                    <stop offset="5%" stop-color="#e35d5b" />
+                                                    <stop offset="95%" stop-color="#e53935" />
+                                                </linearGradient>
+                                            </defs>
+                                            <polygon fill="url(#active-gradient)" points="0 0 10 0 0 10" />
+                                            </svg>
+                                            </div>
+                                            <div class="card-body">
+                                                <h4 class="card-title">{{ card.template.title }}</h4>
+                                                <p>{{ card.template.category.title }}</p>
+                                                <div class="row manage-hkc-date">
+                                                    <div class="or-spacer">
+                                                        <div class="mask"></div>
+                                                    </div>
+                                                    {% if card.date_from is not empty %}
+                                                    <div class="col-6 col-lg-6 col-xl-6">
+                                                        <div class="from-date">Dal <strong>{{ card.date_from }}</strong></div>
+                                                    </div>
+                                                    <div class="col-6 col-lg-6 col-xl-6">
+                                                        <div class="to-date">Al <strong>{{ card.date_to }}</strong></div>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="col-12 col-lg-12 col-xl-12">
+                                                        <div class="always-on"><strong>Sempre attiva</strong></div>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

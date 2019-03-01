@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="wrapper ">
+        {% include 'base/sidebar.html' %}
+        <div class="main-panel">
+            {% include 'base/navbar.html' %}
+            <div class="content no-margin">
+                <form role="form" method="post" action="{% url 'card' card.id %}" id="updateUploadForm">
+                    {% csrf_token %}
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="beginning" class="card bmd-card-raised">
+                                <div class="card-header card-header-success card-header-icon">
+                                    <h4 class="card-title">{{ card.template.title }}
+                                        | {{ card.template.category.title }}</h4>
+                                </div>
+                                {% include 'messages.html' %}
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-12 col-xl-5 ml-auto mr-auto">
+                                            <div id="video-preview" class="card bmd-card-raised">
+                                                <div id="previewDiv" class="intrinsic-container intrinsic-container-16x9">
+                                                    <iframe id="previewframe" src="/templates/{{ card.template.template_name }}" onload="if (typeof formData !== 'undefined') { this.contentWindow.startAnimation(formData); } else { this.contentWindow.startAnimation(); }"
+                                                        style="border:0;" allowfullscreen scrolling="no"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-12 col-xl-6 ml-auto mr-auto">
+                                            <h4 class="block-title m-b-0 ">
+                                                Completa le info che vuoi modificare e clicca su modifica
+                                            </h4>
+                                            <p><br></p>
+                                            <!--<h1 class="m-t-5">Set your Haiku Card!</h1>-->
+                                            {% for field in fields %}
+                                                <div class="form-group form-group-default ">
+                                                    <label>{{ field.template_field.name }}</label>
+                                                    <input id="name" name="field_id_{{ field.id }}" type="text"
+                                                           class="form-control" required value="{{ field.value }}">
+                                                </div>
+                                            {% endfor %}
+                                            <div class="row">
+                                                <div id="submit-buttons" class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                                                    <a href="{% url 'card_delete' card.id %}"
+                                                       class="btn btn-danger float-left" style="width: 100%;">
+                                                        Elimina
+                                                    </a>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                                                    <div>
+                                                        <button id="submitButton" type="button" class="btn btn-default">
+                                                            Modifica
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end of progress-bar-desk -->
+                    </div>
+                    <!-- The Modal -->
+                    <div id="myModal" class="modal">
+                        <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8 col-centered">
+                            <!-- Modal content -->
+                            <div class="modal-content">
+                                <span class="close">&times;</span>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 align-left">
+                                        <h4>Dove vuoi mostrare la tua HaikuCard?</h4>
+                                        <fieldset>
+                                            <div>
+                                                <p class="float-left" style="margin: 5px;">Location 1</p>
+                                                <label class="switch" for="location1">
+                                                    <input type="checkbox" id="location1" name="location"
+                                                           value="location1"/>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <p class="float-left" style="margin: 5px;">Location 2</p>
+                                                <label class="switch" for="location2">
+                                                    <input type="checkbox" id="location2" name="location"
+                                                           value="location2"/>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <p class="float-left" style="margin: 5px;">Location 3</p>
+                                                <label class="switch" for="location3">
+                                                    <input type="checkbox" id="location3" name="location"
+                                                           value="location3"/>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                                        <h4>Quando?</h4>
+                                        <fieldset required>
+                                            <input type="radio" id="date" name="date" value="alwaysOn"
+                                                    {% if not card.date_from and not card.date_to %}
+                                                   checked {% endif %}>
+                                            <label for="time">Sempre attiva</label><br>
+                                            <input type="radio" id="date" name="date" value="specificDate"
+                                                    {% if card.date_from or card.date_to %} checked {% endif %}>
+                                            <label for="time">Indica un periodo specifico</label>
+                                            <br>
+                                            <div class="date-picker {% if card.date_from or card.date_to %} card-edit {% endif %}">
+                                                <h4>Data</h4>
+                                                <p id="errorText" class="text-danger"></p>
+                                                <label for="fromDate">Dal</label>
+                                                <input type="hidden" id="oldFromDate" name="date_from"
+                                                       value="{{ card.date_from|date:"Y-m-d" }}"
+                                                       data-require-pair=" #specificTime">
+                                                <input type="date" id="fromDate" name="date_from"
+                                                       value="{{ card.date_from|date:"Y-m-d" }}"
+                                                       data-require-pair=" #specificTime">
+                                                <br>
+                                                <label for="fromDate">Al</label>
+                                                <input type="hidden" id="oldToDate" name="date_to"
+                                                       value="{{ card.date_to|date:"Y-m-d" }}"
+                                                       data-require-pair="#specificTime">
+                                                <input type="date" id="toDate" name="date_to"
+                                                       value="{{ card.date_to|date:"Y-m-d" }}"
+                                                       data-require-pair="#specificTime">
+                                                <br>
+                                                <br>
+                                                <h4>Orario</h4>
+                                                <p id="errorTextTime" class="text-danger"></p>
+                                                <input type="radio" id="hour" name="hour" value="allDay"
+                                                        {% if not card.time_from and not card.time_to %}
+                                                       checked {% endif %}>
+                                                <label for="time">Tutto il giorno</label>
+                                                <input type="radio" id="time" name="hour" value="specificHour"
+                                                        {% if card.time_from and card.time_to %} checked {% endif %}>
+                                                <label for="time">Orario specifico</label>
+                                                <br>
+                                                <div class="hour-picker {% if card.time_from and card.time_to %} card-edit {% endif %}">
+                                                    <label for="fromHour">Dalle</label>
+                                                    <input type="time" id="fromHour" name="time_from"
+                                                           value="{{ card.time_from|time:"H:i" }}"
+                                                           data-require-pair="#specificHour">
+                                                    <br>
+                                                    <label for="toHour">Alle</label>
+                                                    <input type="time" id="toHour" name="time_to"
+                                                           value="{{ card.time_to|time:"H:i" }}"
+                                                           data-require-pair="#specificHour">
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="row" style="margin:auto;">
+                                        <div class="col-12 align-items-center">
+                                            <button type="submit" class="btn btn-primary float-left"
+                                                    style="margin-right:20px">Conferma
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
